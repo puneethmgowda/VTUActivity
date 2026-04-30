@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connect4Society – Certificate Verification</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:    #1b9e8a;
+      --teal-dk: #14806f;
+      --teal-lt: #e8f7f5;
+      --orange:  #e8743a;
+      --bg:      #eef4f6;
+      --surface: #ffffff;
+      --txt:     #1a2830;
+      --muted:   #5a7080;
+      --border:  #dde8ec;
+      --r:       18px;
+      --shadow:  0 12px 48px rgba(27,158,138,.13);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 16px 56px;
+      color: var(--txt);
+    }
+
+    /* NAV */
+    header {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 4px 20px;
+    }
+    .logo-mark {
+      width: 34px; height: 34px;
+      background: var(--teal);
+      border-radius: 9px;
+      display: grid; place-items: center;
+    }
+    .logo-mark svg { width: 18px; height: 18px; fill: #fff; }
+    .brand {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.05rem;
+      color: var(--teal);
+    }
+
+    /* CARD */
+    .card {
+      width: 100%;
+      max-width: 960px;
+      background: var(--surface);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: rise .5s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes rise {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* CARD HEADER */
+    .card-top {
+      background: linear-gradient(130deg, var(--teal) 0%, var(--teal-dk) 100%);
+      padding: clamp(20px,4vw,32px) clamp(20px,4vw,36px);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-top::after {
+      content:'\';
+      position:absolute;inset:0;
+      background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='.04'%3E%3Ccircle cx='30' cy='30' r='14'/%3E%3C/g%3E%3C/svg%3E") repeat;
+      pointer-events:none;
+    }
+    .org-avatar {
+      width:54px;height:54px;flex-shrink:0;
+      background:rgba(255,255,255,.18);
+      border:1.5px solid rgba(255,255,255,.3);
+      border-radius:13px;
+      display:grid;place-items:center;
+    }
+    .org-avatar svg { width:28px;height:28px;fill:#fff; }
+    .org-name {
+      font-family:'DM Serif Display',serif;
+      font-size:clamp(1.35rem,5vw,2.1rem);
+      color:#fff;
+      letter-spacing:-.3px;
+      line-height:1.15;
+    }
+
+    /* VERIFIED BADGE */
+    .badge-row {
+      display:flex;
+      justify-content:center;
+      padding:30px 24px 26px;
+      border-bottom:1px solid var(--border);
+    }
+    .badge {
+      display:flex;flex-direction:column;align-items:center;gap:7px;
+    }
+    .badge-circle {
+      width:68px;height:68px;
+      background:linear-gradient(135deg,var(--teal),#2bbfaa);
+      border-radius:50%;
+      display:grid;place-items:center;
+      box-shadow:0 0 0 6px var(--teal-lt),0 6px 24px rgba(27,158,138,.35);
+      animation:glow 2.6s ease-in-out infinite;
+    }
+    @keyframes glow {
+      0%,100%{box-shadow:0 0 0 6px var(--teal-lt),0 6px 24px rgba(27,158,138,.35);}
+      50%    {box-shadow:0 0 0 10px var(--teal-lt),0 6px 32px rgba(27,158,138,.55);}
+    }
+    .badge-circle svg{width:36px;height:36px;fill:#fff;}
+    .badge-txt{
+      font-size:.7rem;font-weight:600;
+      letter-spacing:.14em;text-transform:uppercase;
+      color:var(--teal);
+    }
+
+    /* INFO GRID */
+    .info-grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      padding:0 clamp(16px,4vw,36px);
+    }
+    @media(max-width:520px){
+      .info-grid{grid-template-columns:1fr;}
+    }
+
+    .cell {
+      padding:22px 14px;
+      border-bottom:1px solid var(--border);
+      animation:fadeIn .4s ease both;
+    }
+    .cell:nth-child(odd){border-right:1px solid var(--border);}
+    @media(max-width:520px){
+      .cell:nth-child(odd){border-right:none;}
+    }
+    .cell:nth-child(1){animation-delay:.06s}
+    .cell:nth-child(2){animation-delay:.10s}
+    .cell:nth-child(3){animation-delay:.14s}
+    .cell:nth-child(4){animation-delay:.18s}
+    .cell:nth-child(5){animation-delay:.22s}
+    .cell:nth-child(6){animation-delay:.26s}
+    @keyframes fadeIn{
+      from{opacity:0;transform:translateY(6px)}
+      to  {opacity:1;transform:translateY(0)}
+    }
+
+    .cell-label{
+      display:flex;align-items:center;gap:7px;
+      font-size:.7rem;font-weight:600;
+      letter-spacing:.1em;text-transform:uppercase;
+      color:var(--teal);margin-bottom:6px;
+    }
+    .cell-label svg{width:15px;height:15px;fill:var(--teal);flex-shrink:0;}
+    .cell-value{
+      font-size:clamp(.875rem,2.5vw,.975rem);
+      font-weight:400;color:var(--txt);line-height:1.45;
+    }
+
+    /* ABOUT */
+    .about-row{
+      padding:22px clamp(16px,4vw,50px);
+      border-bottom:1px solid var(--border);
+    }
+    .about-row .cell-label{margin-bottom:8px;}
+    .about-row .cell-value{
+      font-size:clamp(.85rem,2.2vw,.95rem);
+      color:var(--muted);line-height:1.65;max-width:72ch;
+    }
+
+    /* FOLLOW */
+    .follow-row{
+      display:flex;flex-direction:column;align-items:center;
+      gap:12px;padding:24px 24px 20px;
+      border-bottom:1px solid var(--border);
+    }
+    .follow-label{font-size:.78rem;color:var(--muted);font-weight:500;}
+    .social-btns{display:flex;gap:10px;}
+    .soc{
+      width:40px;height:40px;border-radius:10px;
+      display:grid;place-items:center;text-decoration:none;
+      transition:transform .18s,box-shadow .18s;
+    }
+    .soc:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.15);}
+    .soc svg{width:18px;height:18px;fill:#fff;}
+    .soc-li{background:#0a66c2;}
+    .soc-ig{background:linear-gradient(135deg,#f58529,#dd2a7b,#515bd4);}
+
+    /* FOOTER */
+    footer{
+      display:flex;justify-content:center;align-items:center;
+      gap:10px;padding:16px 24px;flex-wrap:wrap;
+    }
+    .footer-txt{font-size:.74rem;color:var(--muted);}
+    .footer-icons{display:flex;gap:8px;}
+    .footer-icons a{
+      width:28px;height:28px;border-radius:7px;
+      background:var(--border);display:grid;place-items:center;
+      transition:background .15s;
+    }
+    .footer-icons a:hover{background:var(--teal-lt);}
+    .footer-icons svg{width:13px;height:13px;fill:var(--muted);}
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <header>
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+    </div>
+    <span class="brand">Give My Certificate</span>
+  </header>
+
+  <!-- CARD -->
+  <div class="card">
+
+    <!-- Header -->
+    <div class="card-top">
+      <div class="org-avatar">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+      </div>
+      <h1 class="org-name">Connect4Society</h1>
+    </div>
+
+    <!-- Verified Badge -->
+    <div class="badge-row">
+      <div class="badge">
+        <div class="badge-circle">
+          <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+        </div>
+        <span class="badge-txt">Verified</span>
+      </div>
+    </div>
+
+    <!-- Info Grid -->
+    <div class="info-grid">
+
+      <div class="cell">
+        <div class="cell-label">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          Name
+        </div>
+        <div class="cell-value">Puneeth M [1BI22IC047]</div>
+      </div>
+
+      <div class="cell">
+        <div class="cell-label">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          Certificate Type
+        </div>
+        <div class="cell-value">Participant</div>
+      </div>
+
+      <div class="cell">
+        <div class="cell-label">
+          <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+          Event Name
+        </div>
+        <div class="cell-value">Developing Sustainable Water Management System</div>
+      </div>
+
+      <div class="cell">
+        <div class="cell-label">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+          Event Type
+        </div>
+        <div class="cell-value">Social Event</div>
+      </div>
+
+      <div class="cell">
+        <div class="cell-label">
+          <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+          Start Date
+        </div>
+        <div class="cell-value">01 / 29 / 2025</div>
+      </div>
+
+      <div class="cell">
+        <div class="cell-label">
+          <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+          End Date
+        </div>
+        <div class="cell-value">02 / 12 / 2025</div>
+      </div>
+
+    </div>
+
+    <!-- About -->
+    <div class="about-row">
+      <div class="cell-label">
+        <svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+        About Organization
+      </div>
+      <div class="cell-value">
+        Our main focus is to organize impactful community-driven initiatives that provide timely support during emergencies and essential needs. By creating a reliable connection between volunteers and people who require help.
+      </div>
+    </div>
+
+    <!-- Follow -->
+    <div class="follow-row">
+      <span class="follow-label">Follow us at</span>
+      <div class="social-btns">
+        <a href="#" class="soc soc-li" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="#" class="soc soc-ig" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <span class="footer-txt">Powered By :- Give My Certificate</span>
+      <div class="footer-icons">
+        <a href="#" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </a>
+        <a href="#" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="#" aria-label="Twitter / X">
+          <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+      </div>
+    </footer>
+
+  </div><!-- /card -->
+
+</body>
+</html>
